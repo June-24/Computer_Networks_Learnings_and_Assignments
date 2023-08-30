@@ -1,0 +1,9 @@
+this is in.txt
+from here this all will be copied to out.txt
+
+
+aswerfgwetrgw
+gwertghw
+egrt
+wetgw
+egt
