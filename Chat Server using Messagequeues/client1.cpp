@@ -16,7 +16,7 @@ int main() {
     key_t key_server = ftok("./server_queue.txt", 65);
     int msqid_server = msgget(key_server, 0666 | IPC_CREAT);
 
-    key_t key_client = ftok("./client_queue.txt", 1);
+    key_t key_client = ftok("./client_queue.txt", 2);
     int msqid_client = msgget(key_client, 0666 | IPC_CREAT);
     // creating the pollfds 
     struct pollfd pfd[2];
