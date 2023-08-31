@@ -10,70 +10,59 @@
 #include <sys/wait.h>
 #include <poll.h>
 using namespace std;
-struct my_buffer
+struct my_buffer 
 {
     long type;
     char data[512];
 };
-int main()
+int main ()
 {
-    // creating the msg queues
-    int key_server = ftok("./server.txt", 65);
-    int key_client = ftok("./client.txt", 65);
-    int msqid_server = msgget(key_server, IPC_CREAT | 0666);
-    int msqid_client = msgget(key_client, IPC_CREAT | 0666);
-    map<int, vector<int>> mp;
+    // creating the message queues
+    int key1 = ftok("./server.txt" , 65);
+    int key2 = ftok("./client.txt" , 65);
+    int server_msqid = msgget(key1 , IPC_CREAT | 0666);
+    int client_msqid = msgget(key2 , IPC_CREAT | 0666);
+    map<int,vector<int>> mp;
     while (1)
-    {
-        struct my_buffer temp;
-        int t = msgrcv(msqid_server, &temp, sizeof(temp.data), 0, 0);
-        if (t != -1)
+    {   
+        struct my_buffer* temp = new my_buffer();
+        int t = msgrcv(server_msqid , temp , sizeof(temp->data) , 0 , 0);
+        if (t!=-1)
         {
-            // for first time, inserting into map
-            if (temp.type == 1)
-            {
-                int n = temp.data[0] - '0';
-                string str = "";
-                int i = 0;
-                for (i = 0; temp.data[i] != ':'; i++)
-                {
-                    str += temp.data[i];
+            if (mp.find(temp->type)==mp.end())
+            {   
+                cout<<"User with UserId# "<<temp->data<<" joined the server "<<endl;
+                int n=temp->data[0]-'0';
+                vector<int> grpsin(26,0);
+                for (int i=1;i<strlen(temp->data);i++)
+                    grpsin[temp->data[i]-'A'] = 1;
+                cout<<"And Belongs in the following groups : ";
+                for (int i=0;i<26;i++){
+                    if (grpsin[i]==0)
+                        continue;
+                    cout<<char(i+'A')<<' ';
                 }
-                i++;
-                cout << "User#" << str << " joined the chat " << endl;
-                temp.data[i + n] = '\0';
-                for (int j = i; j < i + n; j++)
-                {
-                    mp[stoi(str)].push_back(temp.data[j] - '0');
-                }
-                cout << endl;
-                continue;
+                cout<<endl;
+                mp[temp->type] = grpsin;
+                continue ;
             }
-            // sending to all who are didnt send the message
-            for (auto j : mp)
+            cout<<"message recieved is : "<<temp->data<<endl;
+            char grp = temp->data[0];
+            for (auto members : mp)
             {
-                if (j.first!=temp.type)
+                // sending in only those who didnt send and are in that group
+                if (members.first!=temp->type)
                 {
-                    // need to send to people in that group
-                    // cout<<temp.data<<endl;
-                    int group_number = temp.data[0]-'0';
-                    string str;
-                    for(int i=2;i<strlen(temp.data);i++){
-                        str+=temp.data[i];
-                    }
-                    for(auto x:j.second){
-                        if(x==group_number){
-                            cout<<"received from person# "<<temp.type<<" message is: "<<str<<endl;
-                            cout<<"Sending to group number : "<<x<<" message is: "<<str<<endl;
-                            struct my_buffer temp1;
-                            temp1.type = j.first;
-                            strncpy(temp1.data, temp.data, sizeof(temp1.data) - 1);
-                            temp1.data[sizeof(temp1.data) - 1] = '\0';
-                            int isfine = msgsnd(msqid_client, &temp1, strlen(temp1.data) + 1, 0);
-                            cout<<"Sent message .."<<endl;
-                        }
-
-                    }
+                    // checking if in group or not
+                    if (members.second[grp-'A']!=1)
+                        continue;
+                    struct my_buffer temp2;
+                    temp2.type = members.first;
+                    string str="UserId# "+to_string(temp->type)+" in group-> "+temp->data;
+                    char const* group_data = (str).c_str();
+                    strncpy(temp2.data,group_data,strlen(group_data));
+                    temp2.data[strlen(group_data)] = '\0';
+                    int isfine = msgsnd(client_msqid , &temp2 , strlen(temp2.data)+1 , 0);
                 }
             }
         }

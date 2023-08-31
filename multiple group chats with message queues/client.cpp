@@ -10,70 +10,54 @@
 #include <sys/wait.h>
 #include <poll.h>
 using namespace std;
-
 struct my_buffer 
 {
     long type;
-    char data[512];
+    char data[512] = {'\0'};
 };
-
 int main ()
 {
-    // creating the msg queues
-    int key_server = ftok("./server.txt" , 65);
-    int key_client = ftok("./client.txt" , 65);
-    int msqid_server = msgget(key_server , IPC_CREAT | 0666);
-    int msqid_client = msgget(key_client , IPC_CREAT | 0666);
-    int n;
-    cout<<"enter the number of groups youre in: ";
-    cin>>n;
-    cout<<"Enter group numbers that you belong in: ";
-    string str="",str1;
-    for(int i=0;i<n;i++){
-        cin>>str1;
-        str=str+str1;
-    }
-    // sending teh pid first to server
+    // creatig the message queues
+    int key1 = ftok("./server.txt" , 65);
+    int key2 = ftok("./client.txt" , 65);
+    int server_msqid = msgget(key1 , IPC_CREAT | 0666);
+    int client_msqid = msgget(key2 , IPC_CREAT | 0666);
+
+    // first message to server details about the group
     long pid = (long)getpid();
+    cout<<"Enter the name of groups (A,B...Z): (capital alphabets)"<<endl;
+    string groups; 
+    getline(cin,groups);
+    groups=to_string(groups.length())+groups;
     struct my_buffer sending_pid;
-    sending_pid.type = 1;//first time is 1
-    string msg=to_string(n)+to_string(getpid())+":"+str;
-    cout<<msg<<endl;
-    char const* pidd = (msg).c_str();
-    strncpy(sending_pid.data,pidd,strlen(pidd));
-    sending_pid.data[strlen(pidd)] = '\0';
-    msgsnd(msqid_server , &sending_pid , strlen(sending_pid.data) , 0);// sending the pid to server
+    sending_pid.type = pid;
+    char const* group_data = (groups).c_str();
+    strncpy(sending_pid.data,group_data,strlen(group_data));
+    sending_pid.data[strlen(group_data)] = '\0';
+    msgsnd(server_msqid , &sending_pid , strlen(sending_pid.data)+1 , 0);
 
     // polling the keyboard
     struct pollfd pfd[1];
     pfd[0].fd = 0; pfd[0].events = POLLIN;
     while (1)
     {
-        int s = poll(pfd , 1 , 10);
-        if (s>0 && pfd[0].revents & POLLIN)
+        int s = poll(pfd , 1 , 100);
+        if (s > 0 && pfd[0].revents & POLLIN)
         {
             struct my_buffer temp;
-            string str;
-            getline(cin,str);
-            
-            for(int i=0;i<str.length();i++){
-                temp.data[i]=str[i];
+            fgets(temp.data , 100 , stdin);
+            if (groups.find(temp.data[0])==string::npos)
+            {
+                cout<<"Cant send because you dont belong in that group"<<endl;
+                continue;
             }
-            temp.data[str.length()]='\0';
             temp.type = pid;
-            msgsnd(msqid_server , &temp , strlen(temp.data) , 0);
+            temp.data[strlen(temp.data)] = '\0';
+            int isfine = msgsnd(server_msqid , &temp , strlen(temp.data)+1 , 0);
         }
-
-        struct my_buffer temp1;
-        int t = msgrcv(msqid_client , &temp1 , sizeof(temp1.data) , getpid() , MSG_NOERROR | IPC_NOWAIT);
-        // cout<<t<<endl;
-        if (t!=-1){
-            temp1.data[t] = '\0';
-            
-            cout<<"User# "<<temp1.type<<" group #"<<temp1.data<<endl;
-        }
-        else{
-            cout<<"smth";
-        }
+        struct my_buffer temp2;
+        int result = msgrcv(client_msqid , &temp2 , sizeof(temp2.data) , getpid() , MSG_NOERROR | IPC_NOWAIT);
+        if (result!=-1)
+            cout<<temp2.data<<endl;
     }
 }
