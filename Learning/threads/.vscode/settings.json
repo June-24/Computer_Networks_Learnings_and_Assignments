@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "pthread.h": "c",
+        "ranges": "cpp",
+        "stack": "cpp"
+    }
+}
