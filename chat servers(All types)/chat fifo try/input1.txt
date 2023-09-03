@@ -1,2 +1,0 @@
-hello number 1 this is the input being from 
-input number 1

@@ -10,25 +10,25 @@ using namespace std;
 
 int main ()
 {
-    mkfifo ("chattalks" , 0666);
+    // opening the famous fifo now
+    mkfifo ("NITWGDB" , 0666);
+    // map for keeping the pid and the ifd for each pid
     map<string,int> mp;
     
-    int rdf = open("chattalks" , O_RDONLY);
+    int ffd = open("NITWGDB" , O_RDONLY);
 
     while (1)
     {
         char buffer[1024] = {'\0'};
-
-        read(rdf , buffer , 1024); 
-
-        bool joinnow = true;
+        read(ffd , buffer , 1024); 
+        bool new_comer = true;
         string pid;
-
         for (int i=0;i<1024;i++)
         {
-            if (buffer[i]==' ')
+            if (buffer[i]==':')
             {
-                joinnow = false;
+                // not first time joining so make it as new and break;
+                new_comer = false;
                 break;
             }
             else if (buffer[i]=='\0')
@@ -36,13 +36,16 @@ int main ()
             else
                 pid += buffer[i];
         }
-
-        cout<<"The message recieved is "<<buffer<<endl;
-
-        if (joinnow && !mp.count(pid))
+        if (new_comer && mp.find(pid)==mp.end())
         {   
-            cout<<"New client : "<<buffer<<" joined the chat .."<<endl;
-            
+            for(auto i:mp){
+                if (i.first!=pid)
+                {  
+                    string t=pid+" has joined the chat";
+                    const char * arr = t.c_str();
+                    write(mp[i.first] , arr , sizeof(arr));
+                }
+            }
             const char * arr = pid.c_str(); 
             int tfd = open(arr , O_WRONLY);
             mp[pid] = tfd;
@@ -50,13 +53,10 @@ int main ()
         else
         {   
             for (auto i : mp)
-            {    cout<<i.first<<endl;
+            {   
                 if (i.first!=pid)
                 {  
-                    cout<<i.first<<"  "<<pid<<endl;
-
                     write(mp[i.first] , buffer , sizeof(buffer));
-                    cout<<"Written finally"<<endl;
                 }
             }
         }
