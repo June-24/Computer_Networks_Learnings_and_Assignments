@@ -9,16 +9,12 @@
 #include<pthread.h>
 using namespace std;
 void* readd(void* arg){
-    // for reading from server
+    // for reading from server creating a fifo using the pid name
     string pid = to_string(getpid());
-    char makepipe[pid.length()+1];
-    for (int i=0;i<pid.length();i++)
-        makepipe[i] = pid[i];
-    makepipe[pid.length()] = '\0';
-    // making that fifo
-    mkfifo(makepipe , 0666);
     const char * pid_pipe = pid.c_str();  
+    mkfifo(pid_pipe , 0666);
     int rfd = open(pid_pipe , O_RDONLY);
+
     while(1){
         char readbuffer[1024];
         read(rfd , readbuffer , sizeof(readbuffer));
@@ -28,7 +24,10 @@ void* readd(void* arg){
 void* write(void* arg){
     // for writing to server
     string pid = to_string(getpid());
-    int wfd = open("NITWGDB" , O_WRONLY);
+    int wfd = open("ChatServer" , O_WRONLY);
+    // first time sending the pid to server
+    write(wfd , pid.c_str() , strlen(pid.c_str()));   
+
     while(1){
         string strl;
         getline(cin,strl);
@@ -41,22 +40,7 @@ void* write(void* arg){
 int main ()
 {
     // getting pid
-    string pid = to_string(getpid());
-    cout<<"process with "<<pid<<" has joined the chat room..... "<<endl;
-
-    // to make new fifo, its name should be the pid_pipe number
-    char makepipe[pid.length()+1];
-    for (int i=0;i<pid.length();i++)
-        makepipe[i] = pid[i];
-    makepipe[pid.length()] = '\0';
-    // making that fifo
-    mkfifo(makepipe , 0666);
-
-    const char * pid_pipe = pid.c_str();
-    int wfd = open("NITWGDB" , O_WRONLY);
-    // first time just sending the pid_pipe number to put in map
-    write(wfd , pid_pipe , strlen(pid_pipe));   
-    int rfd = open(pid_pipe , O_RDONLY);
+    cout<<"process with "<<to_string(getpid())<<" has joined the chat room..... "<<endl;
     
     pthread_t readthread , writethread;
     pthread_create(&readthread , NULL , readd , NULL);

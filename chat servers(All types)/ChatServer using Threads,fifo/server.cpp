@@ -11,11 +11,11 @@ using namespace std;
 int main ()
 {
     // opening the famous fifo now
-    mkfifo ("NITWGDB" , 0666);
+    mkfifo ("ChatServer" , 0666);
     // map for keeping the pid and the ifd for each pid
     map<string,int> mp;
     
-    int ffd = open("NITWGDB" , O_RDONLY);
+    int ffd = open("ChatServer" , O_RDONLY);
 
     while (1)
     {
