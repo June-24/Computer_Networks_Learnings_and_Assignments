@@ -36,7 +36,7 @@ void* readd(void* arg){
 void* writee(void* args){
     while(1){
         struct my_buffer temp;
-        fgets(temp.data , 100 , stdin);
+        fgets(temp.data , 100 , stdin);z
         temp.type = getpid();
         msgsnd(msqid_server , &temp , strlen(temp.data) , 0);
     }
