@@ -12,29 +12,33 @@ key_t key1=ftok("c2.txt",65);
 int shmid1=shmget(key1,1024,0666|IPC_CREAT);
 
 void handler(int sig){
-    cout<<"P1 doing the operation-> "<<endl;
-    // char *str=(char*)shmat(shmid,(void*)0,0);
-    // str=(char*)(1);
-
+    cout<<"P1 doing the operation -> "<<endl;
+    int * fromC2=(int*)shmat(shmid1,(void*)0,0);
+    cout<<"P1 read "<<*fromC2<<" from C2"<<endl;
+    int * toC1=(int*)shmat(shmid,(void*)0,0);
+    *toC1=*fromC2+1;
+    cout<<"P1 wrote "<<*toC1<<" to C1"<<endl<<endl;
 }
-
 int main(){
     signal(SIGUSR1,handler);
     cout<<"this is from p1 pid = "<<getpid()<<endl;
-    // writing the pid into the shared memory
-    char *str=(char*)shmat(shmid,(void*)0,0);
-    const char* str1=to_string(getpid()).c_str();
-    strcpy(str,str1);
+    
+    // writing own pid into the shm
+    int *str=(int*)shmat(shmid,(void*)0,0);
+    *str=getpid();
     sleep(4);
 
     // reading other pid from shared memory
-    char *str2=(char*)shmat(shmid1,(void*)0,0);
-    string P2pid=string(str2);
+    int *str2=(int*)shmat(shmid1,(void*)0,0);
+    int P2pid=*str2;
+    
+    *str2=0;
+    sleep(3);
 
     // got them pids lmaooo
     while(1){
         sleep(1);
-        kill(stoi(P2pid),SIGUSR1);
+        kill(P2pid,SIGUSR1);
         pause();
     }
 }
