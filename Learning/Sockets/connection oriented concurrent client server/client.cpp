@@ -19,7 +19,7 @@ int main(){
     ServerAddr.sin_family=AF_INET;
     // if overo ther laptop, just chnage the ip address to the receivers ip
     ServerAddr.sin_addr.s_addr=inet_addr("127.0.0.0");
-    // ServerAddr.sin_addr.s_addr=inet_addr("2401:4900:4e2a:1f16:8224:151:83a3:2c48");
+
 
     ServerAddr.sin_port=htons(8888);
 
