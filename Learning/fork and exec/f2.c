@@ -17,6 +17,7 @@ int main(){
         // child process
         printf("this is the child part just about to start\n\n");
         printf("f2 is going to execute p2\n\n");
+        printf("the pid of child is: %d\n\n",getpid());
         /*
         By adding fflush(stdout) after the print statements,
         you're explicitly flushing the output buffer,
