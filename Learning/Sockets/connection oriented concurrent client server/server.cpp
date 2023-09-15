@@ -23,7 +23,6 @@ int main()
     // if overo ther laptop, just chnage the ip address to the servers ip
     ServerAddr.sin_addr.s_addr = INADDR_ANY;
     // "SERVER_EXTERNAL_IP_ADDRESS"
-    // ServerAddr.sin_addr.s_addr = inet_addr("2401:4900:4e2a:1f16:8224:151:83a3:2c48");
     // ServerAddr.sin_addr.s_addr = inet_addr("SERVER_EXTERNAL_IP_ADDRESS");
 
 
