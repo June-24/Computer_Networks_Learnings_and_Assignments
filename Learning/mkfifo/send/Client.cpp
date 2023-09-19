@@ -8,7 +8,7 @@ int main(){
     // sending details of file
     mkfifo("NITWGDB",0666);
     int wfd=open("NITWGDB",O_WRONLY);
-    char buff[]={'P','.','c','p','p'};
+    char buff[]="P.cpp";
     write(wfd,buff,sizeof(buff));
 
     // getting details about the result

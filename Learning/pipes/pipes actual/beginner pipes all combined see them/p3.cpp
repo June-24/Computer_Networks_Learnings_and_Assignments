@@ -21,6 +21,7 @@ int main(){
         // closing the pp1 for the child(writing part)
         close(pp[1]);
         read(pp[0],buff2,3);
+        buff2[3]='\0';
         printf("%s",buff2);
     }
 

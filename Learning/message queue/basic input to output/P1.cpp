@@ -7,7 +7,7 @@
 struct my_buffer {
     long type; // Change int to long for message type
     char data[100];
-} message;
+} message; 
 
 int main() {
     // Create a key
@@ -29,5 +29,71 @@ int main() {
 
     printf("Data sent: %s\n", message.data);
 
+    int r=msgrcv(msqid,&message,sizeof(message.data),2,0);
+    if(r==-1)
+    {
+        perror("msgrcv");
+    }
+    printf("Data received from p2` %s\n", message.data);
+
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

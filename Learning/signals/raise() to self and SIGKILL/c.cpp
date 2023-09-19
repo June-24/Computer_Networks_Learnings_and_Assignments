@@ -11,9 +11,9 @@ int main(){
     signal(SIGUSR1, handler);
     signal(SIGKILL, handler);
     // raise(SIGKILL);
+    raise(SIGKILL);
     raise(SIGINT);
     raise(SIGUSR1);
-    raise(SIGKILL);
 
     
 

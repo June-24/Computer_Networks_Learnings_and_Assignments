@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+// wait
+#include <sys/wait.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -52,6 +54,7 @@ int main()
         {
             // Parent process
             close(nsfd);
+
         }
         else
         {

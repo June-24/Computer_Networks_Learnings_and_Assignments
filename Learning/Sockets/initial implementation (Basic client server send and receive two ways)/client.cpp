@@ -33,6 +33,15 @@ int main(){
         perror("sending error");
         return -1;
     }
+    // receiving from the server
+    char buff2[100];    
+    ssize_t bytesRead=recv(sfd,buff2,100,0);
+    if(bytesRead==-1){
+        perror("reading error");
+        return -1;
+    }
+    buff2[bytesRead]='\0';
+    cout<<"Received from server : "<<buff2<<endl;
     close(sfd);
     
 }

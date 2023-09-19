@@ -5,6 +5,7 @@
 // for wait
 #include <sys/wait.h> 
 
+
 using namespace std;
 int main(){
     int c=fork();

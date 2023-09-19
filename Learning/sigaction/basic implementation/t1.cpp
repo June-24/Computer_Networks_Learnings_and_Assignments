@@ -13,6 +13,7 @@ int main() {
     // Create a sigaction structure
     struct sigaction sa;
 
+
     // Initialize the sa struct
     sa.sa_handler = signal_handler; // Function to handle the signal
     sa.sa_flags = 0; // No special flags

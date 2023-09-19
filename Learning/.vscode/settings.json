@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "wait.h": "c",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "cstring": "cpp"
     }
 }

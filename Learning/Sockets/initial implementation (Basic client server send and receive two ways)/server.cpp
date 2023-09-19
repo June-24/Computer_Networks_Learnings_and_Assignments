@@ -47,6 +47,15 @@ int main(){
     }
     buff[bytesRead]='\0';
     cout<<"Received from client : "<<buff<<endl;
+    // writing to the socket
+    string t;
+    cout<<"Enter the message to be sent to the client : ";
+    getline(cin,t);
+    ssize_t bytesWritten=send(nsfd,t.c_str(),t.length(),0);
+    if(bytesWritten==-1){
+        perror("writing error");
+        return -1;
+    }
 
     close(nsfd);
     close(sfd);

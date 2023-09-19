@@ -19,6 +19,7 @@ int main(){
     }
     dup2(t1fd,0);
     dup2(t2fd,1);
+    cout<<"Enter a string: ";
     cin>>s;
     cout<<s;
 }

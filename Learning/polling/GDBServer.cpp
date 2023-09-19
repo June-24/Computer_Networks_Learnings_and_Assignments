@@ -12,7 +12,6 @@ using namespace std;
 
 int main()
 {
-
     int fd1 = open("./in1.txt", O_RDONLY);
     int fd2 = open("./in2.txt", O_RDONLY);
     int fd3 = open("./in3.txt", O_RDONLY);

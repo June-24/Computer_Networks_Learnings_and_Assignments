@@ -14,7 +14,7 @@ struct my_buffer {
 int main() {
     key_t key = ftok("./t.txt", 65);
     int msqid = msgget(key, 0666 | IPC_CREAT);
-
+    while(1){
     message.type = 1;
 
     printf("P1 - Write Data: ");
@@ -24,6 +24,6 @@ int main() {
     msgrcv(msqid, &message, sizeof(message.data), 2, 0);
     cout<<message.type<<endl;
     printf("P1 - Received Response: %s\n", message.data);
-
+    }
     return 0;
 }
