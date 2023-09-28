@@ -1,0 +1,9 @@
+how to start?
+just run the start.cpp
+then start S using ./S
+then start any client from C1, C2,C3 ,C4
+then do as you wish
+
+
+->improvements->
+make just one client and ask for which port so yeah....

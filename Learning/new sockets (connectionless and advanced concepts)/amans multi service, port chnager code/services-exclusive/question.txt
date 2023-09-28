@@ -1,0 +1,18 @@
+S is a super server process which supposes to offer four services S1,S2,S3,S4 by 
+listening to four socket fds. As soon as the first client connects to S1, the server process
+forks a child process and the child process will handle the client request and also
+listen to any other client who comes for the same service.So the super server no longer
+listens on port where S1 was supposed. The parent process will continue to listen to 
+the other three socket fds. 
+
+---> Simple, have four sfds binded to four different ports
+---> Listen to all the four ports
+---> As soon as a client connects to any of the port, fork a child process
+--->In the child process, close all the other three ports and handle the client request
+---> In the parent process, close the port which the client connected to and continue to listen to the other three ports
+
+--port reuse and shit
+https://hea-www.harvard.edu/~fine/Tech/addrinuse.html
+
+https://stackoverflow.com/questions/24194961/how-do-i-use-setsockoptso-reuseaddr
+
