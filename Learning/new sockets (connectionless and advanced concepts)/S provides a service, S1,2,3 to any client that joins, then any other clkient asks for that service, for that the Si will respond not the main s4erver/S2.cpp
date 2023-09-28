@@ -34,7 +34,7 @@ int main()
                 buffer[n] = '\0';
                 cout<<endl;
                 cout << "client port: " << ntohs(client.sin_port) << "   Client IP: " << inet_ntoa(client.sin_addr) << endl; // ntohs is used to convert network byte order to host byte order
-                cout << "service S1(from exec): " << buffer << endl
+                cout << "service S2(from exec): " << buffer << endl
                      << endl;
             }
         }
