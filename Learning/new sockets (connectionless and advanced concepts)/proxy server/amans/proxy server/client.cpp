@@ -7,14 +7,6 @@ using namespace std;
 
 int main (){
     
-    // cout<<"Which Service do you want ? : \n";
-    // cout<<"1. Addition\n2. Subraction"<<endl;
-    
-    // int i; cin>>i;
-
-    // the four ports
-    vector<int> ports = {50001,50002,50003,50004};
-
     int sfd = socket(AF_INET , SOCK_STREAM , 0);
     if (sfd==-1) perror("Socket error");
 
@@ -33,17 +25,29 @@ int main (){
 
     cout<<"Connected"<<endl;
 
+
     string s;
-    cout<<"Enter number to add : "<<endl;
+    cout<<"Which special server? : ";
     getline(cin,s);
 
     const char * buffer = s.c_str();
+    cout<<buffer<<endl;
     send(sfd,buffer,strlen(buffer)+1,0);
 
-    char buff[100];
-    int n = recv(sfd, buff, 100,0);
-    cout<<n<<endl;
-    buff[n]='\0';
+    while(1){
+        string s;
+        cout<<"Enter something nigga : ";
+        getline(cin,s);
 
-    cout<<"Answer is : "<<buff<<endl;
+        buffer = s.c_str();
+        cout<<buffer<<endl;
+        send(sfd,buffer,strlen(buffer)+1,0);
+
+        char buff[100];
+        int n = recv(sfd,buff, 100,0);
+        buff[n]='\0';
+
+        cout<<buff<<endl;
+    }
+
 }
