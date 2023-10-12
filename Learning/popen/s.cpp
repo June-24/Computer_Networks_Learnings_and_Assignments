@@ -4,10 +4,7 @@
 
 #include <sys/wait.h>
 using namespace std;
-int fn(int signo,siginfo_t* info,void* context){
-    info->
 
-}
 int main()
 {
     int p1 = fileno(popen("./p1", "w"));

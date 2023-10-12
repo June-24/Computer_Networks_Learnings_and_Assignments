@@ -13,11 +13,13 @@ using namespace std;
 
 int main ()
 {
-    while (1)
-    {
-        int pid;
-        cin>>pid;
-        kill(pid , SIGUSR1);
-        cout<<"sent signal to main S"<<endl;
+    int c=0;
+    c=fork();
+    if(c>0){
+        cout<<"parent";
+
+    }
+    else{
+        cout<<"Cild";
     }
 }

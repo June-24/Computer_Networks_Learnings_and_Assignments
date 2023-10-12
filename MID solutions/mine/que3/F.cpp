@@ -9,8 +9,9 @@
 #include <fstream>
 #include <sys/wait.h>
 #include <poll.h>
+
 using namespace std;
-// SFD:port
+// SFDi:port
 vector<pair<int, int>> SFDi;
 // SFD:port
 map<pair<int, int>, int> Clients_Data;
@@ -51,11 +52,11 @@ int main()
 
         if (s <= 0)
             continue;
-        // sleep(1);
         for (int i = 0; i < cnt; i++)
         {
             if (i == 0 && (pfd[0].revents & POLLIN))
             {
+                // user input
                 int s = 0;
                 string str1, str2;
                 cin >> str1 >> str2; // port , path ...
@@ -98,7 +99,7 @@ int main()
                 pfd[cnt].fd = sfd;
                 pfd[cnt].events = POLLIN;
                 cnt++;
-                string sending = "latest SFD path is :  " + str2 + "  and port is :  " + str1;
+                string sending = "latest SFD, path is :  " + str2 + "  and port is :  " + str1;
                 const char *buf = sending.c_str();
                 // from the map sending to all others
                 for(auto mp:Clients_Data)
@@ -112,7 +113,6 @@ int main()
                         sendto(SFD, buf, strlen(buf) + 1, 0, (struct sockaddr *)&clientaddress, sizeof(clientaddress));
                     }
                 }
-
                 int c = 0;
                 c = fork();
                 pidss[sfd] = c;
@@ -129,6 +129,7 @@ int main()
             }
             else
             {
+                // client is pinging on the sfdi, so we send the signsl to that si
                 if (pfd[i].revents & POLLIN)
                 {
                     cout<<"sending signal to that Si to which the client asked: "<<endl<<endl<<endl;
@@ -139,7 +140,6 @@ int main()
                 }
             }
         }
-        // cout<<"some data received";
         // getting data of any message from any client
         struct sockaddr_in clientaddress;
         char buffer[100];

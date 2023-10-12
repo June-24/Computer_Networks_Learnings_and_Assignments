@@ -19,12 +19,17 @@ int main ()
     int tty_fd=open("/dev/tty",O_WRONLY);
     dup2(tty_fd,1);
 
-    cout<<"came here boi "<<endl;
+    cout<<"E started now: : :  "<<endl;
 
     while (1)
     {
         char buffer[100];
-        recv(ofd , buffer , sizeof(buffer) , 0);
-        cout<<"Got the message , from E process ... "<<buffer<<endl;
+        int n=recv(ofd , buffer , sizeof(buffer) , 0);
+        if(n>0){
+            buffer[n]='\0';
+            cout<<"E process received: "<<buffer<<endl;
+            fflush(stdout);
+
+        }
     }
 }

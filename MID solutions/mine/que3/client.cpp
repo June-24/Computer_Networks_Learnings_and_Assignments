@@ -24,6 +24,7 @@ void *sendd(void *args)
             string str = choice;
             const char *buf = str.c_str();
             cout << "sending the text : " << str << endl;
+            fflush(stdout);
             sendto(sfd, buf, strlen(buf), 0, (struct sockaddr *)&serveraddress, sizeof(serveraddress));
         }
         else
@@ -49,14 +50,16 @@ void *sendd(void *args)
                 return NULL;
             }
             cout << "Connected successfully" << endl;
+            fflush(stdout);
 
             while (1)
             {
-                string str1 ;
-                cout<<"Enter the message for the Si: ";
-                getline(cin , str1);
+                string str1;
+                cout << "Enter the message for the Si: ";
+                getline(cin, str1);
                 const char *buf = str1.c_str();
                 cout << "sending the text : " << str1 << endl;
+                fflush(stdout);
                 send(sfdd, buf, strlen(buf), 0);
             }
         }
@@ -72,12 +75,13 @@ void *recvv(void *args)
         if (n > 0)
         {
             buf[n] = '\0';
-            cout << "Received from server: " << buf << endl;
+            cout << buf << endl;
+            fflush(stdout);
         }
     }
 }
 int main()
-{
+{                       //dgram
     sfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (sfd == -1)
     {
@@ -88,7 +92,7 @@ int main()
 
     serveraddress.sin_family = AF_INET;
     serveraddress.sin_port = htons(8080);
-    serveraddress.sin_addr.s_addr = inet_addr("127.0.0.1"); 
+    serveraddress.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     bind(sfd, (struct sockaddr *)&serveraddress, sizeof(serveraddress));
     cout << "binded" << endl;

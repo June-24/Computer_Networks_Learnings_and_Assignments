@@ -10,7 +10,8 @@ int adrlen=sizeof(sAddr);
 int sfd,msqid;
 
 struct msg{
-    long type;
+    long type; 
+    
     char pid[20];
 };
 
