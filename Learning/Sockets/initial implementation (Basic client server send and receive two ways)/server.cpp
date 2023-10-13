@@ -34,6 +34,7 @@ int main(){
     struct sockaddr_in ClientAddr;
     socklen_t ClientAddrLen=sizeof(ClientAddr);
     int nsfd=accept(sfd,(struct sockaddr*)&ClientAddr,&ClientAddrLen);
+    close(sfd);
     if(nsfd==-1){
         perror("accepting error");
         return -1;
