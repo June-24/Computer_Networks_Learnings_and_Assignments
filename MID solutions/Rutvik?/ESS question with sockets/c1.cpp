@@ -77,7 +77,7 @@ int main(){
     }
     cout<<"Connection successfull"<<endl;
 
-    msqid=msgget(10,0666 | IPC_CREAT);
+    msqid=msgget(100,0666 | IPC_CREAT);
 
     signal(SIGUSR1,handler);
     signal(SIGUSR2,sendSfd);

@@ -1,9 +1,10 @@
 #include <bits/stdc++.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
 #include <sys/un.h>
 #include <sys/msg.h>
-#include <arpa/inet.h>
 #include <poll.h>
+#include <csignal>
 using namespace std;
 // these ports contain the ports of Si's
 vector<int> ports;
@@ -14,25 +15,51 @@ string name;
 vector<int> sfds;
 struct sockaddr_in sAddr, cAddr;
 int adrlen = sizeof(sAddr);
-int sfd, msqid;
-
-struct msg
+int sfd = -1, msqid;
+struct MyBuff
 {
     long type;
-
     char pid[20];
 };
 
-void sendSfd(int sig)
+int Get_Sfd_From_Old()
+{
+    cout << "My pid : " << getpid() << endl;
+    int usfd = socket(AF_UNIX, SOCK_DGRAM, 0);
+    struct sockaddr_un un;
+    un.sun_family = AF_UNIX;
+    unlink("SendFD");
+    strcpy(un.sun_path, "SendFD");
+
+    if (bind(usfd, (struct sockaddr *)&un, sizeof(un)) < 0)
+    {
+        perror("usfd bind err");
+        return 1;
+    }
+    char buf[512];
+    struct iovec e = {buf, 512};
+    char cmsg[CMSG_SPACE(sizeof(int))];
+    struct msghdr m = {NULL, 0, &e, 1, cmsg, sizeof(cmsg), 0};
+    if (recvmsg(usfd, &m, 0) < 0)
+    {
+        perror("usfd recvmsg err");
+        exit(1);
+    }
+    struct cmsghdr *c = CMSG_FIRSTHDR(&m);
+    int sfd = *(int *)CMSG_DATA(c);
+    return sfd;
+}
+
+void Send_Sfd_To_Next(int sig)
 {
     sleep(1);
     int usfd = socket(AF_UNIX, SOCK_DGRAM, 0);
     struct sockaddr_un uAddr;
     uAddr.sun_family = AF_UNIX;
-    strcpy(uAddr.sun_path, "process_a");
+    strcpy(uAddr.sun_path, "SendFD");
 
     struct iovec e = {NULL, 0};
-    char cmsg[CMSG_SPACE(sizeof(int))]; // allocating space for control data
+    char cmsg[CMSG_SPACE(sizeof(int))];
     struct msghdr m = {(void *)&uAddr, sizeof(uAddr), &e, 1, cmsg, sizeof(cmsg), 0};
     struct cmsghdr *c = CMSG_FIRSTHDR(&m);
     c->cmsg_level = SOL_SOCKET;
@@ -47,19 +74,24 @@ void sendSfd(int sig)
     cout << "sent sfd" << endl;
 }
 
-void handler(int sig)
+void handler(int sig, siginfo_t *info, void *context)
 {
-    // latest addition
-    int k = 3;
-    while (k--)
+    cout << "hello here";
+    sfd = -1;
+    if (sfd == -1)
+    {
+        kill(info->si_pid, SIGUSR2);
+        sfd = Get_Sfd_From_Old();
+    }
+    for(int i=0;i<5;i++)
     {
         char recvMsg[100] = {'\0'};
         recv(sfd, recvMsg, sizeof(recvMsg), 0);
         cout << recvMsg << endl;
-        char sendMsg[8] = "From C1";
-        send(sfd, sendMsg, sizeof(sendMsg), 0);
+        string sendMsg = "From " + name;
+        send(sfd, sendMsg.c_str(), sizeof(sendMsg), 0);
     }
-    msg myMsg;
+    MyBuff myMsg;
     myMsg.type = 1;
     strcpy(myMsg.pid, to_string(getpid()).c_str());
     msgsnd(msqid, &myMsg, sizeof(myMsg), 0);
@@ -68,11 +100,22 @@ void handler(int sig)
     int sz = strlen(myMsg.pid);
     for (int i = 0; i < sz; i++)
         pid += myMsg.pid[i];
-    cout << pid << endl;
     kill(stoi(pid), SIGUSR1);
 }
 void listener()
 {
+    struct sigaction sa;
+    sa.sa_flags = SA_SIGINFO;
+    sa.sa_sigaction = handler;
+    sigaction(SIGUSR1, &sa, NULL);
+    signal(SIGUSR2, Send_Sfd_To_Next);
+    key_t key = ftok("./in2.txt", 65);
+    msqid = msgget(117, 0666 | IPC_CREAT);
+    MyBuff myMsg;
+    myMsg.type = 1;
+    strcpy(myMsg.pid, to_string(getpid()).c_str());
+    msgsnd(msqid, &myMsg, sizeof(myMsg), 0);
+
     cout << "here now";
     struct pollfd pfds[sfds.size()];
     for (int i = 0; i < sfds.size(); i++)
@@ -103,6 +146,7 @@ void listener()
 }
 void print()
 {
+
     cout << "Enter your name: ";
     cin >> name;
     cout << "how many Si do you want to connect ?(count)";
@@ -141,8 +185,6 @@ void print()
 }
 int main()
 {
-    signal(SIGUSR1, handler);
-    signal(SIGUSR2, sendSfd);
     cout << "My pid : " << getpid() << endl;
     if ((sfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -160,12 +202,11 @@ int main()
         listener();
         cout << "here now after connection" << endl;
     }
-    cout << "Connection successfull" << endl;
-
-    msqid = msgget(10, 0666 | IPC_CREAT);
-
-    raise(SIGUSR1);
-
+    struct sigaction sa;
+    sa.sa_flags = SA_SIGINFO;
+    sa.sa_sigaction = handler;
+    sigaction(SIGUSR1, &sa, NULL);
+    signal(SIGUSR2, Send_Sfd_To_Next);
     while (1)
         ;
 }

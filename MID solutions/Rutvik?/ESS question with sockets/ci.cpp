@@ -84,7 +84,7 @@ void handler(int sig,siginfo_t* info,void* context){
 
 int main(){
     cout<<"My pid : "<<getpid()<<endl;
-    msqid=msgget(10,0666 | IPC_CREAT);
+    msqid=msgget(100,0666 | IPC_CREAT);
     msg myMsg;
     myMsg.type=1;
     strcpy(myMsg.pid,to_string(getpid()).c_str());
