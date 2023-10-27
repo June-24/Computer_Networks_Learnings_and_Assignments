@@ -1,0 +1,41 @@
+#include<bits/stdc++.h>
+#include<unistd.h>
+// wait
+#include<sys/wait.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<arpa/inet.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+using namespace std;
+int main(){
+    int sfd=socket(AF_INET,SOCK_STREAM,0);
+    if(sfd==-1){
+        perror("socket error");
+        return -1;
+    }
+    struct sockaddr_in ServerAddr;
+    ServerAddr.sin_family=AF_INET;
+    ServerAddr.sin_addr.s_addr=inet_addr("192.168.206.241");
+    ServerAddr.sin_port=htons(8880);
+
+    if(connect(sfd,(struct sockaddr*)&ServerAddr,sizeof(ServerAddr))==-1){
+        perror("connect error");
+        return -1;
+    }
+    label:
+    cout<<"connected to server"<<endl;
+    string t;
+    cout<<"enter the string"<<endl;
+    getline(cin,t);
+    // cin>>t;
+    ssize_t bytesSent=send(sfd,t.c_str(),t.length(),0);
+    if(bytesSent==-1){
+        perror("send error");
+        return -1;
+    }
+    goto label;
+    
+
+}
