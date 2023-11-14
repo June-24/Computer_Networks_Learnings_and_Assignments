@@ -21,7 +21,7 @@ int main()
     }
         addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
-    addr.sin_port = htons(8080);
+    addr.sin_port = htons(8081);
     if (bind(sfd, (struct sockaddr *)&addr, adrlen) < 0)
     {
         perror("bind err");

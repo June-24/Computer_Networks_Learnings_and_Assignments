@@ -30,6 +30,8 @@ void initialiseIP()
 }
 void initiliseTCP()
 {
+    TCPHdr->source=htons(8080);
+    TCPHdr->dest=htons(9090);
     TCPHdr->seq = 0;
     TCPHdr->ack_seq = 0;
     TCPHdr->doff = 0;
