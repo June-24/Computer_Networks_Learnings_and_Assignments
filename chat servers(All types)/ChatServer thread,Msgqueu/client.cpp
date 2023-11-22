@@ -17,6 +17,7 @@ struct my_buffer
     char data[512];
 };
 // creating the msg queues
+
 int key_server = ftok("./server.txt" , 65);
 int key_client = ftok("./client.txt" , 65);
 int msqid_server = msgget(key_server , IPC_CREAT | 0666);

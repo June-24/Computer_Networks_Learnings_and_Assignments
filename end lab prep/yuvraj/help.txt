@@ -1,0 +1,23 @@
+
+The actual program is very small, it's because of all the command line argument passing the code is bigger, but the highlighted code in summary pdf file is the important part.
+
+the steps are simple,
+
+1) we create packet of size eth_header + arp_header
+2) fill eth_header with dest mac address and source mac address
+3) fill arp header with dest mac, ip address and source mac, ip address
+4) then we simply send these arp reply packets
+
+
+
+
+
+
+after that we keep sending arp reply packets to the victim
+
+
+
+
+
+
+i don't exactly know how or why they work, we'll need two different systems for that
