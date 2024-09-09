@@ -1,1 +1,0 @@
-cmd_/home/abhishek/Desktop/Computer-Networks-Assignments/Device_driver_Assignment_11/chardev/chardev.mod := { echo  /home/abhishek/Desktop/Computer-Networks-Assignments/Device_driver_Assignment_11/chardev/chardev.o; echo; } > /home/abhishek/Desktop/Computer-Networks-Assignments/Device_driver_Assignment_11/chardev/chardev.mod

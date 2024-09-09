@@ -1,4 +1,0 @@
-NAME 	PROTOCOL	TYPE	PORT 	PATH
-capitalize tcp external 8000 ./capitalize
-encrypt udp internal 8002 ./encrypt
-math tcp external 8001 ./math

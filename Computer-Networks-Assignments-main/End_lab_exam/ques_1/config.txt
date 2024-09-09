@@ -1,3 +1,0 @@
-NAME 	PROTOCOL	TYPE	PORT 	PATH
-capitalize tcp external 8000 ./capitalize
-math tcp external 8001 ./math

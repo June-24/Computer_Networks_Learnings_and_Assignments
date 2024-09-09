@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "shm.h": "c",
-        "array": "c",
-        "string": "c",
-        "string_view": "c",
-        "signal.h": "c"
-    }
-}
